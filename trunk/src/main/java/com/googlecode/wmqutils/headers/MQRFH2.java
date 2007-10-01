@@ -2,10 +2,7 @@ package com.googlecode.wmqutils.headers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.ibm.mq.MQMessage;
 
@@ -22,7 +19,7 @@ public class MQRFH2 {
     private int flags = 0;
     private int nameValueCodedCharSetId = 1208;    
     
-    private Map<String, RFH2Area> areas = new HashMap<String, RFH2Area>();
+    private List<RFH2Area> areas = new ArrayList<RFH2Area>();
 
     public MQRFH2() {
         // default cstr
@@ -55,7 +52,7 @@ public class MQRFH2 {
     public void toMessage(MQMessage msg) throws IOException {
         int areasLen = 0;
         List<String> areaStrings = new ArrayList<String>();
-        for (RFH2Area area : areas.values()) {
+        for (RFH2Area area : areas) {
             
             String areaString = area.toString();
             
@@ -94,16 +91,23 @@ public class MQRFH2 {
         return sb.toString();
     }
     
-    public void addArea(String areaName, RFH2Area area) {
-    	areas.put(areaName, area);
+    public void addArea(RFH2Area area) {
+    	areas.add(area);
     }
     
     public RFH2Area getArea(String areaName) {
-    	return areas.get(areaName);
+    	for(RFH2Area area : areas ) {
+    		if(area.getAreaName().equals(areaName)) {
+    			return area;
+    		}
+    	}
+    	
+    	// no area was found
+    	return null;
     }
     
-    public Collection<RFH2Area> getAllAreas() {
-    	return areas.values();
+    public List<RFH2Area> getAllAreas() {
+    	return areas;
     }
     
     public int getVersion() {

@@ -13,7 +13,11 @@ public abstract class RFH2Area {
 		this.areaName = areaName;
 	}
 
-    private int getPaddedFolderLength(int headerLen)
+    public String getAreaName() {
+		return areaName;
+	}
+
+	private int getPaddedFolderLength(int headerLen)
     {
     	int rem = headerLen % 4; 
     	if(rem == 0) {
