@@ -127,6 +127,8 @@ public abstract class RFH2Area {
             
             if(value instanceof String) {
             	sb.append(">").append(value);
+            } else if(value == null) {
+            	sb.append(" xsi:nil='true'>");
             } else if(value instanceof Integer) {
             	sb.append(" dt='i4'>").append(value);
             } else if(value instanceof Long) {
@@ -147,7 +149,7 @@ public abstract class RFH2Area {
             		sb.append(0);
             	}
             } else {
-            	throw new RuntimeException("Illegal proprty type:" + value);
+            	throw new RuntimeException("Illegal property type:" + value);
             }
             
             sb.append("</").append(entry.getKey()).append(">");

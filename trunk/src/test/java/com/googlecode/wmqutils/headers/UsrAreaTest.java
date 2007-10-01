@@ -12,6 +12,7 @@ import junit.framework.TestCase;
 //  <by dt='i1'>3</by>
 //  <fl dt='r4'>123.789</fl>
 //  <double dt='r8'>123.567</double>
+//  <null xsi:nil='true'></null>
 // </usr>
 public class UsrAreaTest extends TestCase {
 
@@ -154,5 +155,12 @@ public class UsrAreaTest extends TestCase {
 		
 		area.setDoubleProperty("foo", 1.23);
 		assertEquals("<usr><foo dt='r8'>1.23</foo></usr>", area.toString().trim());
+	}
+
+	public void testStringPropertyNullToString() {
+		UsrArea area = new UsrArea();
+		
+		area.setStringProperty("foo", null);
+		assertEquals("<usr><foo xsi:nil='true'></foo></usr>", area.toString().trim());
 	}
 }
