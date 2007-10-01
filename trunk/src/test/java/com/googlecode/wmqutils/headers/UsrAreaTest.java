@@ -163,4 +163,11 @@ public class UsrAreaTest extends TestCase {
 		area.setStringProperty("foo", null);
 		assertEquals("<usr><foo xsi:nil='true'></foo></usr>", area.toString().trim());
 	}
+	
+	public void testStringPropertyEscapedCharsToString() {
+		UsrArea area = new UsrArea();
+		
+		area.setStringProperty("foo", "f<f&f>f");
+		assertEquals("<usr><foo>f&lt;f&amp;f&gt;f</foo></usr>", area.toString().trim());
+	}
 }

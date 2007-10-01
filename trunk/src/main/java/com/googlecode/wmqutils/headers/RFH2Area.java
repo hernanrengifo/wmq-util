@@ -116,6 +116,10 @@ public abstract class RFH2Area {
 		}
 	}
 	
+	private String escapeValue(String s) {
+		return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+	}
+	
 	public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<").append(areaName).append(">");
@@ -126,7 +130,7 @@ public abstract class RFH2Area {
             Object value = entry.getValue();
             
             if(value instanceof String) {
-            	sb.append(">").append(value);
+            	sb.append(">").append(escapeValue(value.toString()));
             } else if(value == null) {
             	sb.append(" xsi:nil='true'>");
             } else if(value instanceof Integer) {
