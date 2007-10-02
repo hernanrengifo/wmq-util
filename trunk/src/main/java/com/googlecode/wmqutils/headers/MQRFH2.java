@@ -19,7 +19,7 @@ public class MQRFH2 {
     private int flags = 0;
     private int nameValueCodedCharSetId = 1208;    
     
-    private List<RFH2Area> areas = new ArrayList<RFH2Area>();
+    private List areas = new ArrayList();
 
     public MQRFH2() {
         // default cstr
@@ -51,8 +51,9 @@ public class MQRFH2 {
     
     public void toMessage(MQMessage msg) throws IOException {
         int areasLen = 0;
-        List<String> areaStrings = new ArrayList<String>();
-        for (RFH2Area area : areas) {
+        List areaStrings = new ArrayList();
+        for (int i = 0; i<areas.size(); i++) {
+        	RFH2Area area = (RFH2Area) areas.get(i);
             
             String areaString = area.toString();
             
@@ -75,7 +76,8 @@ public class MQRFH2 {
         msg.writeInt(flags);
         msg.writeInt(nameValueCodedCharSetId);
 
-        for (String folderString : areaStrings) {
+        for (int i = 0; i<areaStrings.size(); i++) {
+        	String folderString = (String) areaStrings.get(i);
             msg.writeInt(folderString.length());
             msg.write(folderString.getBytes("UTF-8"));
         }
@@ -96,7 +98,8 @@ public class MQRFH2 {
     }
     
     public RFH2Area getArea(String areaName) {
-    	for(RFH2Area area : areas ) {
+    	for (int i = 0; i<areas.size(); i++) {
+    		RFH2Area area = (RFH2Area) areas.get(i);
     		if(area.getAreaName().equals(areaName)) {
     			return area;
     		}
@@ -106,8 +109,8 @@ public class MQRFH2 {
     	return null;
     }
     
-    public List<RFH2Area> getAllAreas() {
-    	return areas;
+    public RFH2Area[] getAllAreas() {
+    	return (RFH2Area[]) areas.toArray(new RFH2Area[0]);
     }
     
     public int getVersion() {

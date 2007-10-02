@@ -99,4 +99,8 @@ public class JmsArea extends RFH2Area {
 		setProperty(KEY_TIMESTAMP, Long.toString(timestamp));
 	}
 	
+	protected boolean includeNullValueInToString() {
+		return false;
+	}
+
 }

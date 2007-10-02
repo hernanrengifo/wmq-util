@@ -130,9 +130,9 @@ public class UsrAreaTest extends TestCase {
 	public void testSetFloatProperty() {
 		UsrArea area = new UsrArea();
 		
-		assertEquals(0f, area.getFloatProperty("foo"));
+		assertEquals(0f, area.getFloatProperty("foo"), 0.1);
 		area.setFloatProperty("foo", (float) 1.23);
-		assertEquals(1.23f, area.getFloatProperty("foo"));
+		assertEquals(1.23f, area.getFloatProperty("foo"), 0.1);
 	}
 
 	public void testFloatPropertyToString() {
@@ -145,9 +145,9 @@ public class UsrAreaTest extends TestCase {
 	public void testSetDoubleProperty() {
 		UsrArea area = new UsrArea();
 		
-		assertEquals(0.0, area.getDoubleProperty("foo"));
+		assertEquals(0.0, area.getDoubleProperty("foo"), 0.1);
 		area.setDoubleProperty("foo", 1.23);
-		assertEquals(1.23, area.getDoubleProperty("foo"));
+		assertEquals(1.23, area.getDoubleProperty("foo"), 0.1);
 	}
 
 	public void testDoublePropertyToString() {
@@ -170,4 +170,5 @@ public class UsrAreaTest extends TestCase {
 		area.setStringProperty("foo", "f<f&f>f");
 		assertEquals("<usr><foo>f&lt;f&amp;f&gt;f</foo></usr>", area.toString().trim());
 	}
+	
 }

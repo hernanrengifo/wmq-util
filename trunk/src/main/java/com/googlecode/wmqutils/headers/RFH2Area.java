@@ -1,13 +1,14 @@
 package com.googlecode.wmqutils.headers;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public abstract class RFH2Area {
 
 	private String areaName;
-	protected Map<String, Object> properties = new HashMap<String, Object>();
+	protected Map properties = new HashMap();
 	
 	public RFH2Area(String areaName) {
 		this.areaName = areaName;
@@ -39,11 +40,7 @@ public abstract class RFH2Area {
     }
 
 	protected void setProperty(String name, Object value) {
-		if(value == null) {
-			properties.remove(name);
-		} else {
-			properties.put(name, value);
-		}
+		properties.put(name, value);
 	}
 
 
@@ -120,43 +117,52 @@ public abstract class RFH2Area {
 		return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
 	}
 	
-	public String toString() {
+	protected boolean includeNullValueInToString() {
+		return true;
+	}
+	
+ 	public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<").append(areaName).append(">");
         
-        for (Entry<String, Object> entry : properties.entrySet()) {
-            sb.append("<").append(entry.getKey());
-            
-            Object value = entry.getValue();
-            
-            if(value instanceof String) {
-            	sb.append(">").append(escapeValue(value.toString()));
-            } else if(value == null) {
-            	sb.append(" xsi:nil='true'>");
-            } else if(value instanceof Integer) {
-            	sb.append(" dt='i4'>").append(value);
-            } else if(value instanceof Long) {
-            	sb.append(" dt='i8'>").append(value);
-            } else if(value instanceof Short) {
-            	sb.append(" dt='i2'>").append(value);
-            } else if(value instanceof Byte) {
-            	sb.append(" dt='i1'>").append(value);
-            } else if(value instanceof Float) {
-            	sb.append(" dt='r4'>").append(value);
-            } else if(value instanceof Double) {
-            	sb.append(" dt='r8'>").append(value);
-            } else if(value instanceof Boolean) {
-            	sb.append(" dt='boolean'>");
-            	if(((Boolean)value).booleanValue()) {
-            		sb.append(1);
-            	} else {
-            		sb.append(0);
-            	}
-            } else {
-            	throw new RuntimeException("Illegal property type:" + value);
+        Iterator propsIter = properties.entrySet().iterator();
+        while (propsIter.hasNext()) {
+        	Entry entry = (Entry) propsIter.next();
+        	Object value = entry.getValue();
+            if(value != null || includeNullValueInToString()) {
+        	
+	        	sb.append("<").append(entry.getKey());
+	            
+	            
+	            if(value instanceof String) {
+	            	sb.append(">").append(escapeValue(value.toString()));
+	            } else if(value == null) {
+	            	sb.append(" xsi:nil='true'>");
+	            } else if(value instanceof Integer) {
+	            	sb.append(" dt='i4'>").append(value);
+	            } else if(value instanceof Long) {
+	            	sb.append(" dt='i8'>").append(value);
+	            } else if(value instanceof Short) {
+	            	sb.append(" dt='i2'>").append(value);
+	            } else if(value instanceof Byte) {
+	            	sb.append(" dt='i1'>").append(value);
+	            } else if(value instanceof Float) {
+	            	sb.append(" dt='r4'>").append(value);
+	            } else if(value instanceof Double) {
+	            	sb.append(" dt='r8'>").append(value);
+	            } else if(value instanceof Boolean) {
+	            	sb.append(" dt='boolean'>");
+	            	if(((Boolean)value).booleanValue()) {
+	            		sb.append(1);
+	            	} else {
+	            		sb.append(0);
+	            	}
+	            } else {
+	            	throw new RuntimeException("Illegal property type:" + value);
+	            }
+	            
+	            sb.append("</").append(entry.getKey()).append(">");
             }
-            
-            sb.append("</").append(entry.getKey()).append(">");
         }
         
         sb.append("</").append(areaName).append(">");
