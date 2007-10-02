@@ -49,7 +49,7 @@ public class UsrArea extends RFH2Area {
 	}
 
 	public void setIntProperty(String name, int value) {
-		setProperty(name, Integer.valueOf(value));
+		setProperty(name, new Integer(value));
 	}
 
 	public long getLongProperty(String name) {
@@ -57,7 +57,7 @@ public class UsrArea extends RFH2Area {
 	}
 
 	public void setLongProperty(String name, long value) {
-		setProperty(name, Long.valueOf(value));
+		setProperty(name, new Long(value));
 	}	
 
 	public short getShortProperty(String name) {
@@ -65,7 +65,7 @@ public class UsrArea extends RFH2Area {
 	}
 
 	public void setShortProperty(String name, short value) {
-		setProperty(name, Short.valueOf(value));
+		setProperty(name, new Short(value));
 	}
 	
 
@@ -74,7 +74,7 @@ public class UsrArea extends RFH2Area {
 	}
 
 	public void setByteProperty(String name, byte value) {
-		setProperty(name, Byte.valueOf(value));
+		setProperty(name, new Byte(value));
 	}
 	
 
@@ -83,7 +83,7 @@ public class UsrArea extends RFH2Area {
 	}
 
 	public void setFloatProperty(String name, float value) {
-		setProperty(name, Float.valueOf(value));
+		setProperty(name, new Float(value));
 	}
 	
 
@@ -92,7 +92,7 @@ public class UsrArea extends RFH2Area {
 	}
 
 	public void setDoubleProperty(String name, double value) {
-		setProperty(name, Double.valueOf(value));
+		setProperty(name, new Double(value));
 	}
 	
 

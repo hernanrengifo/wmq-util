@@ -114,7 +114,7 @@ public abstract class RFH2Area {
 	}
 	
 	private String escapeValue(String s) {
-		return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+		return s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 	}
 	
 	protected boolean includeNullValueInToString() {
@@ -169,4 +169,5 @@ public abstract class RFH2Area {
         return padFolder(sb).toString();
 	
 	}
+
 }
