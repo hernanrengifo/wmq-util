@@ -15,6 +15,10 @@ public class UsrArea extends RFH2Area {
 		return properties.containsKey(name);
 	}
 	
+	public String[] getPropertyNames() {
+		return (String[]) properties.keySet().toArray(new String[0]);
+	}
+	
 	public String getStringProperty(String name) {
 		Object value = properties.get(name);
 		

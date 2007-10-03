@@ -180,11 +180,13 @@ public class UsrAreaTest extends TestCase {
 
 	public void testParseWithEmptyArea() throws Exception {
 		UsrArea area = (UsrArea) RFH2Area.parse("<usr></usr>");
+		assertEquals(0, area.getPropertyNames().length);
 	}
 
 	public void testParseWithEmptyTag() throws Exception {
 		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo /></usr>");
 		assertEquals("", area.getStringProperty("foo"));
+		assertEquals("foo", area.getPropertyNames()[0]);
 	}
 	
 	public void testParseWithNull() throws Exception {
@@ -202,6 +204,7 @@ public class UsrAreaTest extends TestCase {
 	public void testParseInt() throws Exception {
 		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo dt='i4'>123</foo></usr>");
 		assertEquals(123, area.getIntProperty("foo"));
+		assertEquals("foo", area.getPropertyNames()[0]);
 	}
 	
 	public void testParseLong() throws Exception {
