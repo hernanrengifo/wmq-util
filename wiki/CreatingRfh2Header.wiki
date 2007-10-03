@@ -16,5 +16,6 @@ Below is a simple code example for creating a RFH2 header containing a mcd and u
         rfh2.addArea(usr);
         
         rfh2.toMessage(msg);
+        q.put(msg);
 
 }}}
