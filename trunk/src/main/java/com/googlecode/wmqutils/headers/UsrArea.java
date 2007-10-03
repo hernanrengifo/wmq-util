@@ -1,6 +1,5 @@
 package com.googlecode.wmqutils.headers;
 
-import com.googlecode.wmqutils.headers.Rfh2AreaParser.Property;
 
 public class UsrArea extends RFH2Area {
 
@@ -12,21 +11,7 @@ public class UsrArea extends RFH2Area {
 		super(areaName);
 	}
 	
-	protected UsrArea(String areaName, Rfh2AreaParser parser) {
-		super(areaName);
-		
-		Property prop = parser.parseNextProperty();
-		
-		while(prop != null) {
-			setProperty(prop.getName(), prop.getValue());
-			
-			prop = parser.parseNextProperty();
-		}
-	}
-
 	public boolean containsProperty(String name) {
-		System.out.println(properties);
-		System.out.println(properties.containsKey("foo"));
 		return properties.containsKey(name);
 	}
 	

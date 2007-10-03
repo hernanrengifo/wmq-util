@@ -171,4 +171,67 @@ public class UsrAreaTest extends TestCase {
 		assertEquals("<usr><foo>f&lt;f&amp;f&gt;f&lt;f&amp;f&gt;f</foo></usr>", area.toString().trim());
 	}
 	
+	
+	public void testParseBasic() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo>bar</foo><baz>bez</baz></usr>");
+		assertEquals("bar", area.getStringProperty("foo"));
+		assertEquals("bez", area.getStringProperty("baz"));
+	}
+
+	public void testParseWithEmptyArea() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr></usr>");
+	}
+
+	public void testParseWithEmptyTag() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo /></usr>");
+		assertEquals("", area.getStringProperty("foo"));
+	}
+	
+	public void testParseWithNull() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo xsi:nil='true'></foo></usr>");
+		assertTrue(area.containsProperty("foo"));
+		assertNull(area.getStringProperty("foo"));
+	}
+
+	public void testParseMixed() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo /><fez>baz</fez></usr>");
+		assertEquals("", area.getStringProperty("foo"));
+		assertEquals("baz", area.getStringProperty("fez"));
+	}
+
+	public void testParseInt() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo dt='i4'>123</foo></usr>");
+		assertEquals(123, area.getIntProperty("foo"));
+	}
+	
+	public void testParseLong() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo dt='i8'>123</foo></usr>");
+		assertEquals(123l, area.getLongProperty("foo"));
+	}
+	
+	public void testParseShort() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo dt='i2'>12</foo></usr>");
+		assertEquals(12, area.getShortProperty("foo"));
+	}
+	
+	public void testParseByte() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo dt='i1'>2</foo></usr>");
+		assertEquals(2, area.getByteProperty("foo"));
+	}
+	
+	public void testParseBoolean() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo dt='boolean'>1</foo><fez dt='boolean'>0</fez></usr>");
+		assertEquals(true, area.getBooleanProperty("foo"));
+		assertEquals(false, area.getBooleanProperty("fez"));
+	}
+	
+	public void testParseFloat() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo dt='r4'>1.23</foo></usr>");
+		assertEquals(1.23, area.getFloatProperty("foo"), 0.1);
+	}
+	
+	public void testParseDouble() throws Exception {
+		UsrArea area = (UsrArea) RFH2Area.parse("<usr><foo dt='r8'>1.23</foo></usr>");
+		assertEquals(1.23, area.getDoubleProperty("foo"), 0.1);
+	}
 }

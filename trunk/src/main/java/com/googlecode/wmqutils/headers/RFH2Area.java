@@ -1,5 +1,6 @@
 package com.googlecode.wmqutils.headers;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -30,13 +31,20 @@ public abstract class RFH2Area {
 
     private StringBuffer padFolder(StringBuffer sb)
     {
-        int folderLen = sb.length();
-        int len = getPaddedFolderLength(folderLen);
+        int folderLen;
+		try {
+			folderLen = sb.toString().getBytes("UTF-8").length;
+	        int len = getPaddedFolderLength(folderLen);
 
-        for(int i = folderLen; i<len; i++) {
-            sb.append(' ');
-        }
-        return sb;
+	        for(int i = folderLen; i<len; i++) {
+	            sb.append(' ');
+	        }
+	        return sb;
+		} catch (UnsupportedEncodingException e) {
+			// should not happen
+			return null;
+		}
+
     }
 
 	protected void setProperty(String name, Object value) {
@@ -167,7 +175,13 @@ public abstract class RFH2Area {
         
         sb.append("</").append(areaName).append(">");
         return padFolder(sb).toString();
-	
 	}
 
+
+ 	
+ 	public static RFH2Area parse(String stringToParse) throws Exception {
+ 		Rfh2AreaParser parser = new Rfh2AreaParser();
+ 		
+ 		return parser.parse(stringToParse);
+ 	}
 }

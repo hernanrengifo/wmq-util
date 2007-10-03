@@ -42,11 +42,30 @@ public class MQRFH2 {
         int length = msg.readInt();
         encoding = msg.readInt();
         codedCharSetId = msg.readInt();
-        format = msg.readString(8);
+        format = msg.readStringOfByteLength(8);
         flags = msg.readInt();
         nameValueCodedCharSetId = msg.readInt();
         
 //         TODO: parse folders
+        
+        int remainLength = length - STRUC_LENGTH; 
+        while(remainLength > 0) {
+        	int areaLen = msg.readInt();
+        	byte[] b = new byte[areaLen];
+        	msg.readFully(b);
+        	
+        	String areaAsString = new String(b, "UTF-8");
+        	
+        	try {
+				RFH2Area area = RFH2Area.parse(areaAsString);
+				addArea(area);
+				
+				remainLength = remainLength - areaLen - 4; 
+				
+			} catch (Exception e) {
+				throw new RuntimeException("Failed to parse header", e);
+			} 	
+        }
     }
     
     public void toMessage(MQMessage msg) throws IOException {
@@ -59,7 +78,8 @@ public class MQRFH2 {
             
             // add to length for prepending length int
             areasLen += 4;
-            areasLen += areaString.length();
+
+            areasLen += areaString.getBytes("UTF-8").length;
             areaStrings.add(areaString);
         }
         
@@ -78,7 +98,7 @@ public class MQRFH2 {
 
         for (int i = 0; i<areaStrings.size(); i++) {
         	String folderString = (String) areaStrings.get(i);
-            msg.writeInt(folderString.length());
+            msg.writeInt(folderString.getBytes("UTF-8").length);
             msg.write(folderString.getBytes("UTF-8"));
         }
     }
