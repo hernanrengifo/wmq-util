@@ -1,5 +1,5 @@
 #labels Featured,Phase-Implementation
-The MQRFH2 class offers a simple way for creating RFH2 headers, including those containing mcd, jms or usr areas.
+Sometimes you need to use the MQ Java Base API and creating a RFH2 header can be less enjoyable. The MQRFH2 class offers a simple way for creating RFH2 headers, including explicit support for mcd, jms or usr areas.
 
 
 Below is a simple code example for creating a RFH2 header containing a mcd and usr area.
