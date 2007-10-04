@@ -29,7 +29,7 @@ public abstract class RFH2Area {
     	}
     }
 
-    private StringBuffer padFolder(StringBuffer sb)
+    protected StringBuffer padFolder(StringBuffer sb)
     {
         int folderLen;
 		try {
@@ -121,7 +121,7 @@ public abstract class RFH2Area {
 		}
 	}
 	
-	private String escapeValue(String s) {
+	protected String escapeValue(String s) {
 		return s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 	}
 	
@@ -129,18 +129,25 @@ public abstract class RFH2Area {
 		return true;
 	}
 	
+	
  	public String toString() {
         StringBuffer sb = new StringBuffer();
         sb.append("<").append(areaName).append(">");
         
-        Iterator propsIter = properties.entrySet().iterator();
+        propertiesToString(sb);
+        
+        sb.append("</").append(areaName).append(">");
+        return padFolder(sb).toString();
+	}
+
+	protected void propertiesToString(StringBuffer sb) {
+		Iterator propsIter = properties.entrySet().iterator();
         while (propsIter.hasNext()) {
         	Entry entry = (Entry) propsIter.next();
         	Object value = entry.getValue();
             if(value != null || includeNullValueInToString()) {
         	
 	        	sb.append("<").append(entry.getKey());
-	            
 	            
 	            if(value instanceof String) {
 	            	sb.append(">").append(escapeValue(value.toString()));
@@ -172,9 +179,6 @@ public abstract class RFH2Area {
 	            sb.append("</").append(entry.getKey()).append(">");
             }
         }
-        
-        sb.append("</").append(areaName).append(">");
-        return padFolder(sb).toString();
 	}
 
 
