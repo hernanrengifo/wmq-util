@@ -13,8 +13,9 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
 /**
- * Simple custom SSL Socket factory for use instead of system properties. Based
- * on code by Peter Broadhurst
+ * Simple custom SSL Socket factory for use instead of system properties. 
+ * 
+ * Based on code by Peter Broadhurst
  * (http://hursleyonwmq.wordpress.com/2007/03/08/custom-sslsocketfactory-with-wmq-base-java/)
  */
 public class PojoSslSocketFactoryFactory {
@@ -46,6 +47,7 @@ public class PojoSslSocketFactoryFactory {
         // Create a keystore object for the keystore
         KeyStore ks = KeyStore.getInstance(keyStoreType);
         
+        // verify input parameters
         if(keyStore == null) {
             throw new NullPointerException("keyStore must be set");
         } else if(!keyStore.exists()) {
@@ -56,7 +58,7 @@ public class PojoSslSocketFactoryFactory {
             throw new NullPointerException("keyStorePassword must be set");
         }
         
-        // Open our file and read the keystore
+        // Load the key store
         FileInputStream keyStoreInput = new FileInputStream(keyStore);
         try {
             ks.load(keyStoreInput, keyStorePassword.toCharArray());
@@ -73,9 +75,10 @@ public class PojoSslSocketFactoryFactory {
                 throw new FileNotFoundException("Trust store file does not exist");
             }
             
-            // Open our file and read the truststore (no password)
+            // Load the trust store
             FileInputStream trustStoreInput = new FileInputStream(trustStore);
             try {
+                // use a trust store password if one is provided
                 char[] tsPassword = null;
                 if(trustStorePassword != null) {
                     tsPassword = trustStorePassword.toCharArray();
@@ -89,11 +92,11 @@ public class PojoSslSocketFactoryFactory {
             ts = ks;
         }
 
-        // Create a default trust and key manager
+        // Create the manager factories
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(trustManagementAlgorithm);
         KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(keyManagementAlgorithm);
 
-        // Initialise the managers
+        // Initialise the manager factories, first the trust manager
         trustManagerFactory.init(ts);
         
         String kp;
@@ -104,6 +107,7 @@ public class PojoSslSocketFactoryFactory {
             kp = keyPassword;
         }
         
+        // then the key manager
         keyManagerFactory.init(ks, kp.toCharArray());
 
         // Get an SSL context. For more information on providers see:
@@ -114,7 +118,7 @@ public class PojoSslSocketFactoryFactory {
         // Initialise our SSL context from the key/trust managers
         sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
 
-        // Get an SSLSocketFactory to pass to WMQ
+        // Now, let's create the socket factory
         return sslContext.getSocketFactory();
     }
 
