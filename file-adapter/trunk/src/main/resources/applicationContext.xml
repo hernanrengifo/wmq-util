@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<!-- Anger vilka propertyfiler som används här i konfigurationen -->
+	<context:property-placeholder location="file:wmq.properties, file:adapter.properties" />
+
+	<!-- En queue connection factory till korrekt QMGR behövs -->
+	<bean id="queueConnectionFactory" class="com.ibm.mq.jms.MQConnectionFactory">
+		<property name="transportType" ref="MQJMS_TP_CLIENT_MQ_TCPIP" />
+		<property name="queueManager" value="${wmq.queueManager}" />
+		<property name="hostName" value="${wmq.hostName}" />
+		<property name="port" value="${wmq.port}" />
+		<property name="channel" value="${wmq.channel}" />
+		<property name="SSLSocketFactory" ref="sslSocketFactoryBean" />
+		<property name="SSLCipherSuite" value="SSL_RSA_WITH_NULL_SHA"></property>
+	</bean>
+
+	<!-- Denna bönan är en property till connection factoryn -->
+	<bean id="MQJMS_TP_CLIENT_MQ_TCPIP"
+		class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+		<property name="staticField">
+			<value>com.ibm.mq.jms.JMSC.MQJMS_TP_CLIENT_MQ_TCPIP</value>
+		</property>
+	</bean>
+
+	<bean id="sslSocketFactoryBean" factory-bean="pojoSslSocketFactoryFactory" factory-method="createSocketFactory" />
+
+	<bean id="pojoSslSocketFactoryFactory" class="com.googlecode.wmqutils.ssl.PojoSslSocketFactoryFactory">
+		<property name="keyStore" ref="keystoreBean" />
+		<property name="keyStorePassword" value="${password}" />
+	</bean>
+
+	<bean id="keystoreBean" class="java.io.File">
+		<constructor-arg value="${keystore}" />
+	</bean>
+
+	<!-- Vi använder oss av JmsTemplate för att skicka meddelanden -->
+	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="queueConnectionFactory" />
+	</bean>
+
+	<!-- ############ -->
+	<!--   Listener   -->
+	<!-- ############ -->
+
+	<!-- En destination som pekar på en specifik kö som vi lyssnar på -->
+	<bean id="destinationListener" class="com.ibm.mq.jms.MQQueue">
+		<constructor-arg value="${queue.listener}" />
+	</bean>
+
+	<!-- Definierar bönan där vi tar emot själva meddelandet -->
+	<bean id="messageListener" class="com.googlecode.wmqutils.fileadapter.listener.Listener">
+		<property name="writeDirectory" value="${write.directory}" />
+		<property name="filePrefix" value="${write.fileprefix}" />
+		<property name="fileSuffix" value="${write.filesuffix}" />
+	</bean>
+
+	<!-- En DML-container måste deklareras -->
+	<bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+		<property name="connectionFactory" ref="queueConnectionFactory" />
+		<property name="destination" ref="destinationListener" />
+		<property name="messageListener" ref="messageListener" />
+	</bean>
+
+	<!-- Definierar en böna vars syfte är att kontrollera att skrivfoldern existerar -->
+	<bean id="validateDirectoryBean" class="com.googlecode.wmqutils.fileadapter.listener.DirectoryValidator">
+		<property name="targetDirectory" value="${write.directory}" />
+	</bean>
+
+
+	<!-- ############ -->
+	<!--   Producer   -->
+	<!-- ############ -->
+
+	<!-- En destination som pekar på en specifik kö som vi skall skriva till -->
+	<bean id="destinationProducer" class="com.ibm.mq.jms.MQQueue">
+		<constructor-arg value="${queue.write}" />
+	</bean>
+
+	<!-- Denna bönan hanterar själva kommunikationen med MQ -->
+	<bean id="producer" class="com.googlecode.wmqutils.fileadapter.producer.MessageProducer">
+		<property name="jmsTemplate" ref="jmsTemplate" />
+		<property name="destination" ref="destinationProducer" />
+	</bean>
+
+</beans>

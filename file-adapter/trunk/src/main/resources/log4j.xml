@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration debug="false" xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p [%t] %C.%M (%F:%L) - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="FILEADAPTER" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="/logs/fileadapter.log"/>
+        <param name="Append" value="true"/>
+        <param name="MaxFileSize" value="100KB"/>
+        <param name="maxBackupIndex" value="10"/> 
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %-5p [%t] %C.%M (%F:%L) - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="INCOMING" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/logs/incoming.log" />
+        <param name="Append" value="true" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd (HH:mm:ss)}, %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="OUTGOING" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="/logs/outgoing.log" />
+        <param name="Append" value="true" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd (HH:mm:ss)}, %m%n" />
+        </layout>
+    </appender>
+
+    <!-- Meddelandeloggar -->
+    <category name="incoming">
+        <priority value="info" />
+        <appender-ref ref="INCOMING" />
+    </category>
+    <category name="outgoing">
+        <priority value="info" />
+        <appender-ref ref="OUTGOING" />
+    </category>
+
+    <category name="com.googlecode.wmqutils.fileadapter">
+        <priority value="debug" />
+        <appender-ref ref="FILEADAPTER" />
+    </category>
+    
+    <!-- Root of Springframework -->
+    <category name="org.springframework">
+        <priority value="info" />
+        <appender-ref ref="FILEADAPTER" />
+    </category>
+        
+    <!--root>
+        <priority value="warn" />
+        <appender-ref ref="VFSCORE_LOG" />
+    </root-->
+
+</log4j:configuration>
