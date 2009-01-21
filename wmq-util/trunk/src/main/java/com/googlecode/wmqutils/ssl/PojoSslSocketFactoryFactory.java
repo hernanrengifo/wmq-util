@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -45,7 +47,12 @@ public class PojoSslSocketFactoryFactory {
      */
     public SSLSocketFactory createSocketFactory() throws GeneralSecurityException, IOException {
         // Create a keystore object for the keystore
-        KeyStore ks = KeyStore.getInstance(keyStoreType);
+        KeyStore ks;
+        try {
+            ks = KeyStore.getInstance(keyStoreType);
+        } catch (KeyStoreException e) {
+            throw new SslKeystoreException("Failed to create key store of type " + keyStoreType + ". Type illegal for this JVM?", e);
+        }
         
         // verify input parameters
         if(keyStore == null) {
@@ -69,7 +76,11 @@ public class PojoSslSocketFactoryFactory {
         KeyStore ts;
         if (trustStore != null) {
             // Create a keystore object for the truststore
-            ts = KeyStore.getInstance(trustStoreType);
+            try {
+                ts = KeyStore.getInstance(trustStoreType);
+            } catch (KeyStoreException e) {
+                throw new SslKeystoreException("Failed to create trust store of type " + trustStoreType + ". Type illegal for this JVM?", e);
+            }
 
             if(!trustStore.exists()) {
                 throw new FileNotFoundException("Trust store file does not exist");
@@ -113,7 +124,12 @@ public class PojoSslSocketFactoryFactory {
         // Get an SSL context. For more information on providers see:
         // http://www.ibm.com/developerworks/library/j-ibmsecurity.html
         // Note: Not all providers support all CipherSuites.
-        SSLContext sslContext = SSLContext.getInstance(protocol);
+        SSLContext sslContext;
+        try {
+            sslContext = SSLContext.getInstance(protocol);
+        } catch (NoSuchAlgorithmException e) {
+            throw new SslKeystoreException("SSL context could not be created using the protocol " + protocol + ". Protocol illegal for this JVM?", e);
+        }
 
         // Initialise our SSL context from the key/trust managers
         sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);

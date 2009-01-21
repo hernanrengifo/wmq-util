@@ -17,7 +17,7 @@ limitations under the License.
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.googlecode.wmqutil</groupId>
     <artifactId>wmq-util</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.5</version>
     <name>WebSphere MQ utilities</name>
     <packaging>jar</packaging>
 
