@@ -1,0 +1,45 @@
+#!/bin/ksh
+#
+# check queue depth
+#
+# Niklas Gustavsson (niklas@protocol7.com)
+# Based on the work by Kyle O'Donnell <kyle[dot]odonnell[at]gmail[dot]com>
+
+
+[ $# -ne 4 ] && echo "usage: $0 <queue manager> <queue> <warn> <crit>" &&  exit 3
+
+QMANAGER=$1
+QUEUE=$2
+WARN=$3
+CRIT=$4
+RUNMQSC="/usr/bin/runmqsc"
+
+XMSGDEPTH=`echo "dis qstatus('${QUEUE}') curdepth" | ${RUNMQSC} ${QMANAGER}`
+MSGDEPTH=`echo "${XMSGDEPTH}" | grep CURDEPTH | sed -e 's/^.*CURDEPTH(//' -e 's/).*$//'`
+
+if [ "${MSGDEPTH}x" = "x" ]; then
+       BLAH=`echo ${XMSGDEPTH} | sed "s/\n//g;"`
+       echo "WARN - ${BLAH}"
+
+       exit 1;
+elif [ ${MSGDEPTH} -ge ${WARN} ] && [ ${MSGDEPTH} -lt ${CRIT} ]; then
+       
+        echo "WARN - ${QUEUE} MSGDEPTH is ${MSGDEPTH} | msgdepth=${MSGDEPTH};${WARN};${CRIT};"
+        exit 1;
+        
+elif [ ${MSGDEPTH} -ge ${CRIT} ]; then
+       
+        echo "CRIT - ${QUEUE} MSGDEPTH is ${MSGDEPTH} | msgdepth=${MSGDEPTH};${WARN};${CRIT};"
+        exit 2;
+        
+elif [ ${MSGDEPTH} -lt ${WARN} ]; then
+         
+        echo "OK - ${QUEUE} MSGDEPTH is ${MSGDEPTH} | msgdepth=${MSGDEPTH};${WARN};${CRIT};"                                               
+        exit 0;                                                                                                                             
+                                                                                                                                            
+else
+        echo "UNKNOWN - MSGDEPTH "
+        exit 3;
+
+fi
+

@@ -1,0 +1,28 @@
+#!/bin/ksh
+#
+# check queue manager status
+#
+# Niklas Gustavsson (niklas@protocol7.com)
+# Based on the work by Kyle O'Donnell <kyle[dot]odonnell[at]gmail[dot]com>
+#
+[ $# -ne 1 ] && echo "usage: $0 <queue manager>" &&  exit 3
+
+QM=$1
+QMSTATUS=`/usr/bin/dspmq -m $QM`
+
+
+if echo $QMSTATUS |grep -i "RUNNING" > /dev/null 2>&1; then
+        
+        STATE=0
+        printf "${QM} is running"
+
+else
+    
+        STATE=2
+        printf "${QM} is not running"
+
+fi
+
+
+exit $STATE;
+

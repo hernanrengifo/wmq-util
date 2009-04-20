@@ -1,0 +1,43 @@
+#!/bin/ksh
+#
+# check queue manager status
+#
+# Niklas Gustavsson (niklas@protocol7.com)
+# Based on the work by Kyle O'Donnell <kyle[dot]odonnell[at]gmail[dot]com>
+#
+[ $# -ne 2 ] && echo "usage: $0 <queue manager> <channel>" &&  exit 3
+
+qmgr=$1
+channel=$2
+
+RUNMQSC="/usr/bin/runmqsc"
+
+chanexist=`echo "dis channel(${channel})" | ${RUNMQSC} ${qmgr}`
+
+if echo $chanexist |grep -i "AMQ8147" > /dev/null 2>&1; then
+  STATE=2
+  printf "CRITICAL - ${channel} on ${qmgr} does not exist"
+elif echo $chanexist |grep -i "AMQ8414" > /dev/null 2>&1; then
+  # channel exists, check status
+  chanstatus=`echo "dis chs(${channel}) status" | ${RUNMQSC} ${qmgr} | grep -i "status("`
+    
+  #echo `echo "dis chs(${channel}) status" | ${RUNMQSC} ${qmgr}`
+
+  if echo $chanstatus |grep -i "status(RETRYING)" > /dev/null 2>&1; then
+    STATE=1
+    printf "WARNING - ${channel} on ${qmgr} is retrying"
+
+  elif echo $chanstatus |grep -i "status(STOPPED)" > /dev/null 2>&1; then
+    STATE=2
+    printf "CRITICAL - ${channel} on ${qmgr} is stopped"
+
+  else
+    STATE=0
+    printf "OK - channel status on ${channel} on ${qmgr} okay"
+  fi
+else
+  STATE=2
+  printf "CRITICIAL - error checking status on ${channel} on ${qmgr}"
+fi
+
+exit $STATE;
