@@ -1,0 +1,20 @@
+Sometimes you need to use the MQ Java Base API and creating a RFH2 header can be less enjoyable. The MQRFH2 class offers a simple way for creating RFH2 headers, including explicit support for mcd, jms or usr areas.
+
+
+Below is a simple code example for creating a RFH2 header containing a mcd and usr area.
+```
+        MQMessage msg = new MQMessage();
+        MQRFH2 rfh2 = new MQRFH2();
+        
+        McdArea mcd = new McdArea();
+        mcd.setMessageDomain("MRM");
+        rfh2.addArea(mcd);
+        
+        UsrArea usr = new UsrArea();
+        usr.setStringProperty("kalle", "rune");
+        rfh2.addArea(usr);
+        
+        rfh2.toMessage(msg);
+        q.put(msg);
+
+```
